@@ -10,13 +10,23 @@
 #include <string.h>
 // las direcciones multicast rango: 224.0.0.1 a 239.255.255.255
 
+typedef struct bloque {
+          char tx[12];//identidad del transmisor multicast
+          char narch[32];//nombre del archivo transmitido
+          int nb;// número del bloque transmitido
+          int bb;// numero de bytes en el bloque, bb==0 => terminó el archivo
+          char bytes[2024];//bloque de bytes del archivo
+}bloque;
+
+
 extern int errno;
 char bufer[1024];
 
 main(int argc, char * argv[]){
         struct  sockaddr_in server;
         struct ip_mreq multi;
-        int adrl, sock;
+        int adrl, sock,archivo,l;
+        bloque datos;
 /********************************************************************/
         sock= socket(AF_INET, SOCK_DGRAM, 0);
         if (sock < 0) {
@@ -49,9 +59,18 @@ main(int argc, char * argv[]){
         printf("Me asignaron el puerto: %d\n",ntohs(server.sin_port));
 
 /********************************************************************/
-/********************************************************************/      
-               
-        if (read(sock,bufer,1024)<0)perror("recibiendo datagrama");
-        printf("%s\n",bufer);
-                
+/********************************************************************/
+        archivo = open("wea.jpg",O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+
+        while(1){
+            read(sock,&datos, sizeof(datos));
+            printf("%d\n",datos.bb );
+            if(datos.bb <= 0 ){
+              break;
+            }
+
+            write(archivo,&datos.bytes,datos.bb);
+        }
+
+
 }

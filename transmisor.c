@@ -20,7 +20,7 @@ typedef struct bloque {
 #define DATA "Este el super mensaje en datagrama"
 
 main(int argc, char * argv[]){
-        int  sock;
+        int  sock,l;
         struct  sockaddr_in name;
         struct  hostent *hp, *gethostbyname();
         bloque datos;
@@ -36,15 +36,24 @@ main(int argc, char * argv[]){
                 fprintf(stderr, "%s: host desconocido\n", argv[1]);
                 exit(2);
         }
-        bcopy(hp->h_addr, &name.sin_addr, hp->h_length);
+        bcopy(hp->h_addr,&name.sin_addr, hp -> h_length);
         name.sin_family = AF_INET;
         name.sin_port = htons(atoi(argv[2]));
+
+
         int f =  open("foto.jpg",O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
         datos.nb = 0;
         while(1){
-          l = read(f,&datos.bytes, sizeof(datos.bytes))
+          if(datos.bb<= 0){
+            lseek(f,0,SEEK_SET);
+
+          }
+          l = read(f,&datos.bytes, sizeof(datos.bytes));
           datos.bb = l;
-          send(sock,&datos.buffer, l , 0);
+          send(sock,&datos, sizeof(datos), 0);
+          printf("%d\n", datos.bb);
+
         }
+        close(f);
         close(sock);
 }
