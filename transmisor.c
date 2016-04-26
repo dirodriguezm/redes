@@ -9,13 +9,21 @@
 #include <ctype.h>
 #include <string.h>
 
+typedef struct bloque {
+          char tx[12];//identidad del transmisor multicast
+          char narch[32];//nombre del archivo transmitido
+          int nb;// número del bloque transmitido
+          int bb;// numero de bytes en el bloque, bb==0 => terminó el archivo
+          char bytes[2024];//bloque de bytes del archivo
+}bloque;
+
 #define DATA "Este el super mensaje en datagrama"
 
 main(int argc, char * argv[]){
         int  sock;
         struct  sockaddr_in name;
         struct  hostent *hp, *gethostbyname();
-
+        bloque datos;
 /********************************************************************/
         sock= socket(AF_INET, SOCK_DGRAM, 0);
         if (sock < 0) {
@@ -31,8 +39,12 @@ main(int argc, char * argv[]){
         bcopy(hp->h_addr, &name.sin_addr, hp->h_length);
         name.sin_family = AF_INET;
         name.sin_port = htons(atoi(argv[2]));
-
-        if(sendto(sock, (void *)DATA, sizeof(DATA), 0, (struct sockaddr * )&name, sizeof(name))<0)
-                perror("enviando el datagrama");
+        int f =  open("foto.jpg",O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+        datos.nb = 0;
+        while(1){
+          l = read(f,&datos.bytes, sizeof(datos.bytes))
+          datos.bb = l;
+          send(sock,&datos.buffer, l , 0);
+        }
         close(sock);
 }
