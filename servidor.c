@@ -12,11 +12,13 @@
 extern int errno;
 int numero;
 
-typedef struct pdu
-{
-	int nbyte;
-	char buffer[1024]; 
-}pdu;
+typedef struct bloque {
+          char tx[12];//identidad del transmisor multicast
+          char narch[32];//nombre del archivo transmitido
+          int nb;// número del bloque transmitido
+          int bb;// numero de bytes en el bloque, bb==0 => terminó el archivo
+          char bytes[1024];//bloque de bytes del archivo
+}bloque;
 
 
 int obtenerSocket(char * puerto){
@@ -55,36 +57,35 @@ int aceptarConexion(int sock){
         adrl = sizeof (struct sockaddr_in);
         printf("Servidor esperando a cliente\n");
         conexion = accept(sock, (struct  sockaddr *)&server, &adrl); //espera y acepta conexion del cliente
-        return conexion;     
+        return conexion;
 }
 
 
-    
+
 main(int argc, char * argv[]){
         int sock, l, conexion;
-        pdu datos;
+        bloque datos;
 /********************************************************************/
         while(1){
         	 sock = obtenerSocket(argv[1]);
         	 conexion = aceptarConexion(sock); //espera y acepta conexion del cliente
         	 if (conexion)printf("llego un cliente!\n");
-        	
-        	 int f =  open("servidor.c",O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+             //Se abre el archivo a enviar al cliente
+        	 int archivo =  open(argv[2],O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
         	 while(1){
-        	 	l = read(f, &datos.buffer, sizeof(datos.buffer));        	 	
-        	 	if (l<=0)
-        	 	{
+        	 	l = read(archivo, &datos.bytes, sizeof(datos.bytes));
+                if (l<=0){
         	 		break;
-        	 	}else{
-        	 		write(conexion, &datos.buffer, l);
         	 	}
-        	 }
-        	 printf("Archivo Enviado\n");	
-        	 close(f);
-        }       
-       
-/********************************************************************/
-        l=read(conexion, &numero, sizeof(numero)); //recibe del cliente
-        close(conexion);      
-}
+                write(conexion, &datos.bytes, l);
 
+        	 }
+        	 printf("Archivo Enviado\n");
+        	 close(archivo);
+			 close(conexion);
+        }
+
+/********************************************************************/
+
+
+}

@@ -15,7 +15,7 @@ typedef struct bloque {
           char narch[32];//nombre del archivo transmitido
           int nb;// número del bloque transmitido
           int bb;// numero de bytes en el bloque, bb==0 => terminó el archivo
-          char bytes[2024];//bloque de bytes del archivo
+          char bytes[1024];//bloque de bytes del archivo
 }bloque;
 
 
@@ -37,7 +37,7 @@ main(int argc, char * argv[]){
         bzero(&server, sizeof(server));
         server.sin_family = AF_INET;
         server.sin_addr.s_addr = INADDR_ANY;
-//        server.sin_port = 0; //deja que el sistema operativo le asigne numero de puerto
+//       server.sin_port = 0; //deja que el sistema operativo le asigne numero de puerto
         server.sin_port = htons(atoi(argv[2])); //deja que el sistema operativo le asigne numero de puerto
 /********************************************************************/
         multi.imr_multiaddr.s_addr=inet_addr(argv[1]);
@@ -60,17 +60,21 @@ main(int argc, char * argv[]){
 
 /********************************************************************/
 /********************************************************************/
-        archivo = open("wea.jpg",O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+
+
+        archivo = open(argv[3],O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+
 
         while(1){
-            read(sock,&datos, sizeof(datos));
-            printf("%d\n",datos.bb );
+            if (read(sock,&datos,sizeof(datos))<0)perror("recibiendo datagrama");
+            
             if(datos.bb <= 0 ){
-              break;
+              //break;
             }
-
-            write(archivo,&datos.bytes,datos.bb);
+            printf("nombre archivo: %s, n paquete : %d, n datos : %d\n",datos.narch,datos.nb,datos.bb );
+            //write(archivo,&datos.bytes,datos.bb);
         }
+        close(archivo);
 
 
 }
