@@ -70,18 +70,18 @@ main(int argc, char * argv[]){
 	while(1){
         if (read(sock,&datos,sizeof(datos))<0)perror("recibiendo datagrama");
         if(escritura){
-            if(datos.bb <= 0 ){
-
-                break;
-            }
-            if(datos.nb == esperado && strcmp(argv[3],datos.narch){
+            if(datos.nb == esperado && !strcmp(argv[3],datos.narch)){
                 write(archivo,&datos.bytes,datos.bb);
                 esperado++;
             }          
 
+            if(datos.nb  ==  ultimo){
+
+                break;
+            }
         }else{
             if(datos.bb <= 0 ){
-                ultimo = datos.nb - 1;
+                ultimo = datos.nb -1;
                 escritura = 1;
                 continue;
             }
