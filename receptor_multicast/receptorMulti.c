@@ -62,22 +62,27 @@ main(int argc, char * argv[]){
 /********************************************************************/
 
 	if(read(sock,&datos,sizeof(datos))<0)perror("recibiendo datagrama");
-	archivo = open(datos.narch,O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+	archivo = open(datos.narch,O_WRONLY | O_CREAT , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
 	int n  = datos.nb;
+    int escritura = 0;
 	while(1){
-	  if (read(sock,&datos,sizeof(datos))<0)perror("recibiendo datagrama");
-	  write(archivo,&datos.bytes,datos.bb);
-	  if(datos.bb <= 0 ){
-	    lseek(archivo,0,SEEK_SET);
-	    continue;
-          }
-	  if(datos.nb == n){
-	    break;
-	    }
-	  
-	  
+        if (read(sock,&datos,sizeof(datos))<0)perror("recibiendo datagrama");
+        if(escritura){
+            write(archivo,&datos.bytes,datos.bb);
+            if(datos.bb <= 0 ){
+                //lseek(archivo,0,SEEK_SET);
+                break;
+            }
+        }else{
+            if(datos.bb <= 0 ){
+                //lseek(archivo,0,SEEK_SET);
+                escritura = 1;
+                continue;
+            }
         }
-        close(archivo);
+        printf("%d %d \n",datos.bb, datos.nb );
+    }
+    close(archivo);
 
 
 }
