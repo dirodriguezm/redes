@@ -75,10 +75,11 @@ main(int argc, char * argv[]){
              strcpy(datos.narch, argv[2]);
         	 while(1){
         	 	datos.bb = read(archivo, &datos.bytes, sizeof(datos.bytes));
+                write(conexion, &datos, sizeof(datos));
                 if (datos.bb<=0){
         	 		break;
         	 	}
-                write(conexion, &datos, sizeof(datos));
+
         	 }
         	 printf("Archivo Enviado\n");
         	 close(archivo);

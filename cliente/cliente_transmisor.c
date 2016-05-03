@@ -53,6 +53,7 @@ main(int argc, char * argv[]){
         conexion=conectarCon(argv[1], argv[2]);
         printf("Se conectó\n");
         l=read(conexion, &datos , sizeof(datos));
+        printf("%s\n", datos.narch);
         archivo = open(datos.narch,O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
         while(1){
                 write(archivo, &datos.bytes ,datos.bb);
