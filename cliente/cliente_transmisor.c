@@ -80,7 +80,7 @@ main(int argc, char * argv[]){
                 fprintf(stderr, "%s: host desconocido\n", argv[1]);
                 exit(2);
         }
-        bcopy(hp->h_addr,&name.sin_addr, hp -> h_length);
+	bcopy(hp->h_addr,&name.sin_addr, hp -> h_length);
         name.sin_family = AF_INET;
         name.sin_port = htons(atoi(argv[4]));
         //archivo a enviar.
@@ -99,6 +99,6 @@ main(int argc, char * argv[]){
             cont++;
             printf("%d %d \n", datos.bb,datos.nb);
         }
-        close(archivo2);
+        close(archivo);
         close(sock);
 }
