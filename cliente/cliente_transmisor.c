@@ -52,15 +52,15 @@ main(int argc, char * argv[]){
         printf("Se va a conectar al servidor \n");
         conexion=conectarCon(argv[1], argv[2]);
         printf("Se conectó\n");
-        l=read(conexion, &datos , sizeof(datos));
-        printf("%s\n", datos.narch);
+        read(conexion, &datos.narch , sizeof(datos.narch));    
         archivo = open(datos.narch,O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
         while(1){
-                write(archivo, &datos.bytes ,datos.bb);
+                datos.bb=read(conexion, &datos.bytes , sizeof(datos.bytes));
                 if( datos.bb <= 0 ){
                         break;
                 }
-                l=read(conexion, &datos , sizeof(datos));
+                write(archivo, &datos.bytes ,datos.bb);
+
         }
         close(conexion);
         close(archivo);

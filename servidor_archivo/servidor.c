@@ -72,13 +72,13 @@ main(int argc, char * argv[]){
         	 if (conexion)printf("llego un cliente!\n");
              //Se abre el archivo a enviar al cliente
         	 int archivo =  open(argv[2],O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
-             strcpy(datos.narch, argv[2]);
+             write(conexion, argv[2], sizeof(datos.narch));
         	 while(1){
         	 	datos.bb = read(archivo, &datos.bytes, sizeof(datos.bytes));
-                write(conexion, &datos, sizeof(datos));
                 if (datos.bb<=0){
         	 		break;
         	 	}
+                write(conexion, &datos.bytes, datos.bb);
 
         	 }
         	 printf("Archivo Enviado\n");
