@@ -63,7 +63,7 @@ int aceptarConexion(int sock){
 
 
 main(int argc, char * argv[]){
-        int sock, l, conexion;
+        int sock, conexion;
         bloque datos;
 /********************************************************************/
         while(1){
@@ -72,13 +72,13 @@ main(int argc, char * argv[]){
         	 if (conexion)printf("llego un cliente!\n");
              //Se abre el archivo a enviar al cliente
         	 int archivo =  open(argv[2],O_RDONLY , S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+             strcpy(datos.narch, argv[2]);
         	 while(1){
-        	 	l = read(archivo, &datos.bytes, sizeof(datos.bytes));
-                if (l<=0){
+        	 	datos.bb = read(archivo, &datos.bytes, sizeof(datos.bytes));
+                if (datos.bb<=0){
         	 		break;
         	 	}
-                write(conexion, &datos.bytes, l);
-
+                write(conexion, &datos, sizeof(datos));
         	 }
         	 printf("Archivo Enviado\n");
         	 close(archivo);
