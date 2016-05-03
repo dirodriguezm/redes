@@ -92,6 +92,8 @@ main(int argc, char * argv[]){
             strcpy(datos.narch, argv[3]);
             datos.nb = cont;
             datos.bb = l;
+        
+            datos.
             if(sendto(sock,&datos, sizeof(datos), 0, (struct sockaddr * )&name, sizeof(name))<0)perror("enviando el datagrama");
             if(datos.bb<= 0){
                 lseek(archivo,0,SEEK_SET);
